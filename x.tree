@@ -1,0 +1,56 @@
+mca21-sentiment-pipeline/
+├── README.md                           # Comprehensive documentation
+├── requirements.txt                    # Python dependencies
+├── Dockerfile                          # Container configuration
+├── .env.example                        # Environment variables template
+├── LICENSE                             # MIT license file
+├── config.py                          # Central configuration and constants
+│
+├── app/                               # Streamlit application
+│   ├── main.py                        # Main Streamlit entry point
+│   └── ui.py                          # UI components and dashboard layout
+│
+├── pipeline/                          # Core processing pipeline
+│   ├── process.py                     # Main processing orchestrator
+│   ├── translation.py                 # Hindi→English translation service
+│   ├── aspect_extraction.py          # Aspect-based sentiment analysis
+│   ├── sentiment.py                   # Sentiment classification wrapper
+│   ├── intent.py                      # Intent detection (zero-shot)
+│   └── insights.py                    # Actionable insights generator
+│
+├── models/                            # Model wrappers and API clients
+│   ├── gemini_client.py              # Optional Gemini summarization
+│   └── embedding.py                   # Sentence transformers wrapper
+│
+├── utils/                             # Utility functions
+│   ├── text.py                        # Text processing and normalization
+│   └── db.py                          # SQLite database interface
+│
+├── tests/                             # Test suite
+│   ├── test_pipeline.py              # Pipeline component tests
+│   └── test_streamlit_app.py          # App smoke tests
+│
+├── tools/                             # Helper scripts
+│   └── generate_sample_data.py        # Sample data generator
+│
+├── scripts/                           # Run helpers
+│   └── run_local.sh                   # Local development script
+│
+├── data/                              # Data files
+│   ├── sample_reviews.csv             # Sample Hindi/English reviews
+│   └── reviews.db                     # SQLite database (created at runtime)
+│
+├── outputs/                           # Output files
+│   └── example_processed.json         # Expected output format example
+│
+├── docs/                              # Documentation
+│   └── architecture.md                # Design rationale and model choices
+│
+├── logs/                              # Log files (created at runtime)
+│   └── pipeline.log
+│
+└── models/cache/                      # Model cache (created at runtime)
+    ├── translation/
+    ├── sentiment/
+    ├── intent/
+    └── embeddings/

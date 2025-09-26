@@ -1,0 +1,193 @@
+{
+  "reviews": [
+    {
+      "review_id": "EN_001",
+      "original_text": "The website is very slow and difficult to navigate. Forms take too long to load.",
+      "translated_text": null,
+      "language": "English",
+      "timestamp": "2025-01-15T10:30:00",
+      "sentiment": "Negative",
+      "sentiment_score": 0.82,
+      "intent": "Complaint",
+      "intent_score": 0.89,
+      "aspects": [
+        {
+          "aspect_id": 1,
+          "aspect_label": "performance",
+          "matched_text": "website is very slow",
+          "aspect_sentiment": "Negative",
+          "aspect_sentiment_score": 0.85
+        },
+        {
+          "aspect_id": 2,
+          "aspect_label": "usability",
+          "matched_text": "difficult to navigate",
+          "aspect_sentiment": "Negative", 
+          "aspect_sentiment_score": 0.78
+        },
+        {
+          "aspect_id": 3,
+          "aspect_label": "functionality",
+          "matched_text": "Forms take too long to load",
+          "aspect_sentiment": "Negative",
+          "aspect_sentiment_score": 0.80
+        }
+      ],
+      "tokens_positive": [],
+      "tokens_negative": ["slow", "difficult", "long"]
+    },
+    {
+      "review_id": "HI_001",
+      "original_text": "यह वेबसाइट बहुत अच्छी है और उपयोग में आसान है।",
+      "translated_text": "This website is very good and easy to use.",
+      "language": "Hindi",
+      "timestamp": "2025-01-15T14:22:00",
+      "sentiment": "Positive",
+      "sentiment_score": 0.91,
+      "intent": "Praise",
+      "intent_score": 0.87,
+      "aspects": [
+        {
+          "aspect_id": 1,
+          "aspect_label": "user_interface",
+          "matched_text": "website is very good",
+          "aspect_sentiment": "Positive",
+          "aspect_sentiment_score": 0.93
+        },
+        {
+          "aspect_id": 2,
+          "aspect_label": "usability", 
+          "matched_text": "easy to use",
+          "aspect_sentiment": "Positive",
+          "aspect_sentiment_score": 0.88
+        }
+      ],
+      "tokens_positive": ["good", "easy"],
+      "tokens_negative": []
+    },
+    {
+      "review_id": "EN_002",
+      "original_text": "I suggest improving the loading speed and adding more help documentation.",
+      "translated_text": null,
+      "language": "English",
+      "timestamp": "2025-01-16T09:15:00",
+      "sentiment": "Neutral",
+      "sentiment_score": 0.52,
+      "intent": "Suggestion",
+      "intent_score": 0.94,
+      "aspects": [
+        {
+          "aspect_id": 1,
+          "aspect_label": "performance",
+          "matched_text": "improving the loading speed",
+          "aspect_sentiment": "Neutral",
+          "aspect_sentiment_score": 0.55
+        },
+        {
+          "aspect_id": 4,
+          "aspect_label": "documentation",
+          "matched_text": "adding more help documentation",
+          "aspect_sentiment": "Neutral",
+          "aspect_sentiment_score": 0.48
+        }
+      ],
+      "tokens_positive": ["improving", "help"],
+      "tokens_negative": []
+    }
+  ],
+  "summary": {
+    "statistical_summary": {
+      "total_reviews": 3,
+      "positive_percent": 33.3,
+      "negative_percent": 33.3,
+      "neutral_percent": 33.3
+    },
+    "textual_summary": "The analysis of 3 e-consultation platform reviews reveals mixed user sentiment. Key concerns include website performance issues, particularly slow loading times and navigation difficulties. However, users also appreciate the interface design and usability when the system works properly. Common suggestions focus on improving loading speeds and enhancing help documentation. The feedback indicates both technical performance issues and positive user experience elements that should be maintained while addressing the identified problems.",
+    "aspect_summaries": {
+      "performance": "performance: 2 mentions (0.0% positive, 50.0% negative)",
+      "usability": "usability: 2 mentions (50.0% positive, 50.0% negative)",
+      "functionality": "functionality: 1 mentions (0.0% positive, 100.0% negative)",
+      "user_interface": "user_interface: 1 mentions (100.0% positive, 0.0% negative)",
+      "documentation": "documentation: 1 mentions (0.0% positive, 0.0% negative)"
+    }
+  },
+  "wordcloud": {
+    "positive_keywords": ["good", "easy", "improving", "help"],
+    "negative_keywords": ["slow", "difficult", "long"],
+    "aspect_keywords": {
+      "performance": ["slow", "loading", "speed"],
+      "usability": ["navigate", "easy", "difficult"],
+      "functionality": ["forms", "load"],
+      "user_interface": ["website", "good"],
+      "documentation": ["help", "documentation"]
+    }
+  },
+  "insights": {
+    "pain_points": [
+      {
+        "aspect": "performance",
+        "score": 2.1,
+        "total_mentions": 2,
+        "negative_mentions": 1,
+        "negative_ratio": 0.5,
+        "examples": [
+          "website is very slow",
+          "Forms take too long to load"
+        ],
+        "severity": "Medium"
+      },
+      {
+        "aspect": "functionality",
+        "score": 1.38,
+        "total_mentions": 1,
+        "negative_mentions": 1,
+        "negative_ratio": 1.0,
+        "examples": [
+          "Forms take too long to load"
+        ],
+        "severity": "Medium"
+      }
+    ],
+    "recommendations": [
+      "🚀 **Performance Issues**: Medium priority - Optimize system performance and loading times. (1 complaints)",
+      "⚙️ **Functionality Issues**: Medium priority - Review and fix core functionality problems. (1 complaints)",
+      "💡 **User Suggestions**: Review 1 user suggestions for potential feature improvements and enhancements."
+    ],
+    "trends": {
+      "date_range": {
+        "start": "2025-01-15",
+        "end": "2025-01-16"
+      },
+      "total_days": 2,
+      "sentiment_trend": "Limited data",
+      "volume_trend": "Limited data",
+      "daily_averages": {
+        "total": 1.5,
+        "positive_ratio": 0.33,
+        "negative_ratio": 0.33
+      }
+    },
+    "language_breakdown": {
+      "English": {
+        "total_reviews": 2,
+        "sentiment_distribution": {
+          "positive": 0.0,
+          "negative": 0.5,
+          "neutral": 0.5
+        },
+        "top_intent": "Complaint",
+        "avg_sentiment_score": 0.67
+      },
+      "Hindi": {
+        "total_reviews": 1,
+        "sentiment_distribution": {
+          "positive": 1.0,
+          "negative": 0.0,
+          "neutral": 0.0
+        },
+        "top_intent": "Praise",
+        "avg_sentiment_score": 0.91
+      }
+    }
+  }
+}
