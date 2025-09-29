@@ -20,12 +20,14 @@ for dir_path in [DATA_DIR, CACHE_DIR, OUTPUTS_DIR, LOGS_DIR]:
 DB_PATH = os.getenv("DB_PATH", str(DATA_DIR / "reviews.db"))
 
 # Model configurations
-# Model configurations
 MODEL_CONFIGS = {
     "translation": {
-        "model_name": "Helsinki-NLP/opus-mt-hi-en",
+        "model_name": "facebook/m2m100_418M",
         "cache_dir": str(CACHE_DIR / "translation"),
         "max_length": 512,
+        "batch_size": 8,
+        "src_lang": "hi",
+        "tgt_lang": "en",
     },
     "sentiment": {
         "model_name": "cardiffnlp/twitter-roberta-base-sentiment-latest",
@@ -45,6 +47,13 @@ MODEL_CONFIGS = {
     },
     "spacy": {
         "model_name": "en_core_web_sm",
+    },
+    "absa": {
+        "model_name": "multilingual",  # Use pre-trained multilingual ABSA model
+        "cache_dir": str(CACHE_DIR / "absa"),
+        "max_seq_len": 512,
+        "batch_size": 16,
+        "device": "auto",  # Will auto-detect GPU/CPU
     },
 }
 

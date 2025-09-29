@@ -1,7 +1,7 @@
 """Hindi to English translation service using Helsinki-NLP models."""
 
 import torch
-from transformers import MarianMTModel, MarianTokenizer, pipeline
+from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer, pipeline
 from typing import Optional, List
 import logging
 from functools import lru_cache
@@ -20,6 +20,9 @@ class TranslationService:
         self.model_name = self.model_config["model_name"]
         self.cache_dir = self.model_config["cache_dir"]
         self.max_length = self.model_config["max_length"]
+        self.batch_size = self.model_config.get("batch_size", 8)
+        self.src_lang = self.model_config.get("src_lang", "hi")
+        self.tgt_lang = self.model_config.get("tgt_lang", "en")
         
         self._model = None
         self._tokenizer = None
@@ -53,12 +56,12 @@ class TranslationService:
         try:
             logger.info(f"Loading translation model: {self.model_name}")
             
-            self._tokenizer = MarianTokenizer.from_pretrained(
+            self._tokenizer = M2M100Tokenizer.from_pretrained(
                 self.model_name,
                 cache_dir=self.cache_dir
             )
             
-            self._model = MarianMTModel.from_pretrained(
+            self._model = M2M100ForConditionalGeneration.from_pretrained(
                 self.model_name,
                 cache_dir=self.cache_dir
             )
@@ -66,6 +69,9 @@ class TranslationService:
             # Move to GPU if available
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             self._model.to(device)
+            
+            # Set source language
+            self._tokenizer.src_lang = self.src_lang
             
             logger.info(f"Translation model loaded successfully on {device}")
             
@@ -122,30 +128,49 @@ class TranslationService:
     def _translate_with_model(self, text: str) -> str:
         """Translate using direct model inference."""
         try:
-            # Tokenize input
-            inputs = self.tokenizer.encode(
-                text, 
-                return_tensors="pt", 
-                max_length=self.max_length,
-                truncation=True
-            )
+            # Set source language
+            self._tokenizer.src_lang = self.src_lang
             
-            # Move to same device as model
-            inputs = inputs.to(self.model.device)
+            # Split text into sentences for better translation quality
+            # Simple sentence splitting for now
+            sentences = [s.strip() for s in text.split('.') if s.strip()]
+            if not sentences:
+                sentences = [text]
             
-            # Generate translation
+            translations = []
+            
             with torch.no_grad():
-                outputs = self.model.generate(
-                    inputs,
-                    max_length=self.max_length,
-                    num_return_sequences=1,
-                    temperature=0.7,
-                    do_sample=False
-                )
+                for i in range(0, len(sentences), self.batch_size):
+                    batch = sentences[i:i + self.batch_size]
+                    
+                    # Tokenize batch
+                    encoded = self._tokenizer(
+                        batch, 
+                        return_tensors="pt", 
+                        padding=True, 
+                        truncation=True,
+                        max_length=self.max_length
+                    ).to(self._model.device)
+                    
+                    # Generate translation with forced target language
+                    generated_tokens = self._model.generate(
+                        **encoded,
+                        forced_bos_token_id=self._tokenizer.get_lang_id(self.tgt_lang),
+                        max_length=self.max_length,
+                        num_return_sequences=1,
+                        do_sample=False
+                    )
+                    
+                    # Decode batch
+                    translated_batch = self._tokenizer.batch_decode(
+                        generated_tokens, 
+                        skip_special_tokens=True
+                    )
+                    translations.extend(translated_batch)
             
-            # Decode output
-            translated = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            return translated.strip()
+            # Join translations
+            final_text = " ".join(translations)
+            return final_text.strip()
             
         except Exception as e:
             logger.error(f"Model translation error: {str(e)}")
@@ -246,14 +271,55 @@ class TranslationService:
             # Translate non-empty texts
             results = [""] * len(texts)
             
-            if self._pipeline is not None:
-                # Use pipeline for batch processing
+            if self._model is not None and self._tokenizer is not None:
+                # Use direct model for better batch processing
+                batch_texts = [text for _, text in non_empty_texts]
+                
+                # Set source language
+                self._tokenizer.src_lang = self.src_lang
+                
+                translations = []
+                with torch.no_grad():
+                    for i in range(0, len(batch_texts), self.batch_size):
+                        batch = batch_texts[i:i + self.batch_size]
+                        
+                        # Tokenize batch
+                        encoded = self._tokenizer(
+                            batch, 
+                            return_tensors="pt", 
+                            padding=True, 
+                            truncation=True,
+                            max_length=self.max_length
+                        ).to(self._model.device)
+                        
+                        # Generate translation
+                        generated_tokens = self._model.generate(
+                            **encoded,
+                            forced_bos_token_id=self._tokenizer.get_lang_id(self.tgt_lang),
+                            max_length=self.max_length,
+                            num_return_sequences=1,
+                            do_sample=False
+                        )
+                        
+                        # Decode batch
+                        translated_batch = self._tokenizer.batch_decode(
+                            generated_tokens, 
+                            skip_special_tokens=True
+                        )
+                        translations.extend(translated_batch)
+                
+                # Map results back to original positions
+                for (original_idx, _), translation in zip(non_empty_texts, translations):
+                    results[original_idx] = translation.strip()
+            
+            elif self._pipeline is not None:
+                # Fallback to pipeline for batch processing
                 batch_texts = [text for _, text in non_empty_texts]
                 batch_results = self.translation_pipeline(
                     batch_texts,
                     max_length=self.max_length,
                     truncation=True,
-                    batch_size=8
+                    batch_size=self.batch_size
                 )
                 
                 # Map results back to original positions
@@ -286,6 +352,9 @@ class TranslationService:
             "model_name": self.model_name,
             "cache_dir": self.cache_dir,
             "max_length": self.max_length,
+            "batch_size": self.batch_size,
+            "src_lang": self.src_lang,
+            "tgt_lang": self.tgt_lang,
             "model_loaded": self._model is not None,
             "pipeline_loaded": self._pipeline is not None,
             "device": str(self.model.device) if self._model else "N/A"

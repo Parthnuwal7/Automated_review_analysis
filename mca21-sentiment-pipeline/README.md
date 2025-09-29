@@ -35,11 +35,12 @@ A production-ready MVP for analyzing e-consultation reviews with multilingual su
 ## 🛠️ Technology Stack
 
 ### Core Models
-- **Translation**: Helsinki-NLP/opus-mt-hi-en (Hindi→English)
+- **Translation**: facebook/m2m100_418M (Hindi→English, multilingual)
 - **Sentiment**: cardiffnlp/twitter-xlm-roberta-base-sentiment (multilingual)
 - **Intent**: facebook/bart-large-mnli (zero-shot classification)
-- **Embeddings**: sentence-transformers/all-MiniLM-L6-v2 (aspect clustering)
-- **NER/POS**: spaCy en_core_web_sm (aspect extraction)
+- **ABSA**: pyABSA multilingual model (aspect extraction + sentiment)
+- **Embeddings**: sentence-transformers/all-MiniLM-L6-v2 (semantic similarity)
+- **NER/POS**: spaCy en_core_web_sm (text processing)
 
 ### Framework
 - **Frontend**: Streamlit with caching and interactive components
@@ -48,10 +49,14 @@ A production-ready MVP for analyzing e-consultation reviews with multilingual su
 - **Optional**: Google Gemini API for summarization
 
 ### Model Selection Rationale
-- **Small/Medium Models**: Chosen for CPU/GPU efficiency while maintaining accuracy
+- **M2M100**: Multilingual translation model providing better quality for Hindi-English translation
+- **pyABSA**: State-of-the-art library specifically designed for aspect-based sentiment analysis, providing:
+  - Pre-trained multilingual models for aspect extraction and sentiment classification
+  - Robust handling of domain-specific aspects and sentiments
+  - End-to-end ABSA pipeline with minimal configuration
 - **Multilingual Coverage**: Models tested on Hindi-English code-mixed data
-- **Zero-shot Capability**: Enables intent detection without training data
-- **Embedding Clustering**: Efficient aspect discovery without labeled data
+- **Zero-shot Capability**: Intent detection without training data
+- **Production Ready**: All models chosen for CPU/GPU efficiency while maintaining accuracy
 
 ## 🚦 Quick Start
 
@@ -66,6 +71,8 @@ source venv/bin/activate # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
+
+**Note**: PyABSA will automatically download required models on first use. Ensure you have sufficient disk space (~1-2GB for models).
 
 2. **Configure Environment**:
 ```bash
